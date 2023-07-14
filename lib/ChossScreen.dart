@@ -11,13 +11,9 @@ class ChossScreen extends StatefulWidget {
 }
 
 class _ChossScreenState extends State<ChossScreen> {
- 
- @override
+  @override
   void initState() {
     super.initState();
-   
-    // 1. This method call when app in terminated state and you get a notification
-    // when you click on notification app open from terminated state and you can get notification data in this method
 
     FirebaseMessaging.instance.getInitialMessage().then(
       (message) {
@@ -46,7 +42,6 @@ class _ChossScreenState extends State<ChossScreen> {
           print(message.notification!.body);
           print("message.data11 ${message.data}");
           localNotificationService.createanddisplaynotification(message);
-
         }
       },
     );
@@ -63,6 +58,7 @@ class _ChossScreenState extends State<ChossScreen> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,7 +119,7 @@ class _ChossScreenState extends State<ChossScreen> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                 Get.to(MyHomePage());
+                  Get.to(MyHomePage());
                 },
               ),
             ),
