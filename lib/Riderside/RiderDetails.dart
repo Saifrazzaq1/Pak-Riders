@@ -1,6 +1,9 @@
-import 'package:pakriders/constants.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Riderdetails extends StatefulWidget {
-  const Riderdetails({super.key});
+  Riderdetails({Key? key});
 
   @override
   State<Riderdetails> createState() => _RiderdetailsState();
@@ -8,240 +11,301 @@ class Riderdetails extends StatefulWidget {
 
 class _RiderdetailsState extends State<Riderdetails> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    String plate='Loading...';
-    String platenum='Loading...';
-    String model='Loading..';
-    String type='Loading';
-    String image='Loading...';
-    String image1='Loading...';
-    String image2='Loading...';
-   void getData() async {
-    User? user= await FirebaseAuth.instance.currentUser;
-   // var vari= await FirebaseFirestore.instance.collection('users').doc(user?.uid).get();
-     var vari= await FirebaseFirestore.instance.collection('vehicle').doc(user?.uid).get();
+  String plate = 'Loading...';
+  String platenum = 'Loading...';
+  String model = 'Loading..';
+  String type = 'Loading';
+  String image = 'Loading...';
+  String image1 = 'Loading...';
+  String image2 = 'Loading...';
+
+  // Add a list to store user ratings
+  List<Map<String, dynamic>> userRatings = [];
+
+  // Create a function to fetch user ratings
+  Future<void> fetchUserRatings() async {
+    User? user = await FirebaseAuth.instance.currentUser;
+    QuerySnapshot ratingSnapshot = await FirebaseFirestore.instance
+        .collection('UserRatings')
+        .doc(user?.uid)
+        .collection('Ratings')
+        .get();
+
     setState(() {
-    plate=vari.data()!['plate'];
-    platenum=vari.data()!['platenum'];
-    model=vari.data()!['model'];
-    type=vari.data()!['type'];
-    image= vari.data()!['CNIC'];
-    image1= vari.data()!['Vehicle card'];
-    image2= vari.data()!['Selfi'];
-   // image=vari1.data()!['Selfi'];
-
+      userRatings = ratingSnapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
     });
-
   }
-   @override
-     void initState(){
+
+  void getData() async {
+    User? user = await FirebaseAuth.instance.currentUser;
+    // var vari= await FirebaseFirestore.instance.collection('users').doc(user?.uid).get();
+    var vari = await FirebaseFirestore.instance
+        .collection('vehicle')
+        .doc(user?.uid)
+        .get();
+    setState(() {
+      plate = vari.data()!['plate'];
+      platenum = vari.data()!['platenum'];
+      model = vari.data()!['model'];
+      type = vari.data()!['type'];
+      image = vari.data()!['CNIC'];
+      image1 = vari.data()!['Vehicle card'];
+      image2 = vari.data()!['Selfi'];
+      // image=vari1.data()!['Selfi'];
+    });
+    await fetchUserRatings();
+  }
+
+  @override
+  void initState() {
     //  getRData();
     getData();
-   
+
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text('More Details')),
-        backgroundColor:Color(0xff58BE3F),
+        backgroundColor: Color(0xff58BE3F),
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
-        children: [ SizedBox(height: 10,),
-          Center(
-            child: Text(
-              "Vehicle Details",
-              style: TextStyle(
-                color: Color(0xff58BE3F),
-                fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.of(context).size.width * 0.06,
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Center(
+              child: Text(
+                "Vehicle Details",
+                style: TextStyle(
+                  color: Color(0xff58BE3F),
+                  fontWeight: FontWeight.bold,
+                  fontSize: MediaQuery.of(context).size.width * 0.06,
+                ),
               ),
             ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Plate Alpha",
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  plate,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Plate Num",
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  platenum,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Model #",
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  model,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Vehicle Type",
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  type,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-
-          Divider(height: 3, thickness: 1, color: Colors.blueGrey[200]),
-            const SizedBox(height: 40,),
-          Center(
-            child: Text(
-              "CNIC",
-              style: TextStyle(
-                color: Color(0xff58BE3F),
-                fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.of(context).size.width * 0.06, // Adjust the font size based on screen width
-              ),
-            ),
-          ),
-
-          Padding(
-                    padding:  EdgeInsets.all(10.0),
-                    child: Container(
-                      width: 330,
-                      height: 250,
-                      color: Colors.black12 ,
-                      child: Center(
-                        child: Image.network(image,
-                         fit: BoxFit.fitWidth,
-                         ),
-                      ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Plate Alpha",
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                    Divider(height: 1, thickness: 1, color: Colors.blueGrey[200]),
-            const SizedBox(height: 40,),
-          Center(
-            child: Text(
-              "Vehicle Card",
-              style: TextStyle(
-                color: Color(0xff58BE3F),
-                fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.of(context).size.width * 0.06, // Adjust the font size based on screen width
-              ),
-            ),
-          ),
-
-          Padding(
-                    padding:  EdgeInsets.all(10.0),
-                    child: Container(
-                      width: 330,
-                      height: 250,
-                      color: Colors.black12 ,
-                      child: Center(
-                        child: Image.network(image1,
-                         fit: BoxFit.cover,
-                         ),
-                      ),
+                  Text(
+                    plate,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal,
                     ),
                   ),
-                    Divider(height: 1, thickness: 1, color: Colors.blueGrey[200]),
-            const SizedBox(height: 40,),
-          Center(
-            child: Text(
-              "Selfie",
-              style: TextStyle(
-                color: Color(0xff58BE3F),
-                fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.of(context).size.width * 0.06, // Adjust the font size based on screen width
+                ],
               ),
             ),
-          ),
-
-          Padding(
-                    padding:  EdgeInsets.all(10.0),
-                    child: Container(
-                      width: 330,
-                      height: 250,
-                      color: Colors.black12 ,
-                      child: Center(
-                        child: Image.network(image2,
-                         fit: BoxFit.cover,
-                         ),
-                      ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Plate Num",
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-        ]
+                  Text(
+                    platenum,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Model #",
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    model,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Vehicle Type",
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    type,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Divider(height: 3, thickness: 1, color: Colors.blueGrey[200]),
+            const SizedBox(
+              height: 40,
+            ),
+            Center(
+              child: Text(
+                "CNIC",
+                style: TextStyle(
+                  color: Color(0xff58BE3F),
+                  fontWeight: FontWeight.bold,
+                  fontSize: MediaQuery.of(context).size.width *
+                      0.06, // Adjust the font size based on screen width
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Container(
+                width: 330,
+                height: 250,
+                color: Colors.black12,
+                child: Center(
+                  child: Image.network(
+                    image,
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+              ),
+            ),
+            Divider(height: 1, thickness: 1, color: Colors.blueGrey[200]),
+            const SizedBox(
+              height: 40,
+            ),
+            Center(
+              child: Text(
+                "Vehicle Card",
+                style: TextStyle(
+                  color: Color(0xff58BE3F),
+                  fontWeight: FontWeight.bold,
+                  fontSize: MediaQuery.of(context).size.width *
+                      0.06, // Adjust the font size based on screen width
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Container(
+                width: 330,
+                height: 250,
+                color: Colors.black12,
+                child: Center(
+                  child: Image.network(
+                    image1,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            Divider(height: 1, thickness: 1, color: Colors.blueGrey[200]),
+            const SizedBox(
+              height: 40,
+            ),
+            Center(
+              child: Text(
+                "Selfie",
+                style: TextStyle(
+                  color: Color(0xff58BE3F),
+                  fontWeight: FontWeight.bold,
+                  fontSize: MediaQuery.of(context).size.width *
+                      0.06, // Adjust the font size based on screen width
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Container(
+                width: 330,
+                height: 250,
+                color: Colors.black12,
+                child: Center(
+                  child: Image.network(
+                    image2,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+
+            // Add the buildRatings widget to display user ratings
+            buildRatings(),
+          ],
         ),
       ),
     );
+  }
+
+  Widget buildRatings() {
+    if (userRatings.isEmpty) {
+      return Text('No ratings available');
+    } else {
+      return Column(
+        children: [
+          Text(
+            'User Ratings:',
+            style: TextStyle(
+              color: Color(0xff58BE3F),
+              fontWeight: FontWeight.bold,
+              fontSize: MediaQuery.of(context).size.width * 0.06,
+            ),
+          ),
+          for (var rating in userRatings)
+            ListTile(
+              title: Text('Rating: ${rating['rating']}'),
+              subtitle: Text('User: ${rating['userName']}'),
+            ),
+        ],
+      );
+    }
   }
 }

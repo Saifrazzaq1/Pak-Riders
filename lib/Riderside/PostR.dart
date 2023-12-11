@@ -2,19 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pakriders/constants.dart';
 
-
 class postR extends StatefulWidget {
   @override
   _postRState createState() => _postRState();
 }
 
 class _postRState extends State<postR> {
-  CameraPosition _initialLocation = const CameraPosition(target: LatLng(0.0, 0.0));
+  CameraPosition _initialLocation =
+      const CameraPosition(target: LatLng(0.0, 0.0));
   late GoogleMapController mapController;
-  
+
   late Position _currentPosition;
   String _currentAddress = '';
-   final _formkey = GlobalKey<FormState>();
+  final _formkey = GlobalKey<FormState>();
   final startAddressController = TextEditingController();
   final destinationAddressController = TextEditingController();
 
@@ -24,22 +24,20 @@ class _postRState extends State<postR> {
   String _startAddress = '';
   String _destinationAddress = '';
   String? _placeDistance;
-   storeUserInfo()async{
-  String uid= FirebaseAuth.instance.currentUser!.uid;
-  FirebaseFirestore.instance.collection('Findpost').doc(uid).set({
-   'start': startAddressController.text,
-   'destination': destinationAddressController.text,
-   'distance': _placeDistance.toString(),
-  
+  storeUserInfo() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseFirestore.instance.collection('Findpost').doc(uid).set({
+      'start': startAddressController.text,
+      'destination': destinationAddressController.text,
+      'distance': _placeDistance.toString(),
+    }).then((value) {
+      startAddressController.clear();
+      destinationAddressController.clear();
 
-  }).then((value) {
-  startAddressController.clear();
-  destinationAddressController.clear();
-  
-  // addressController.clear();
-  // Get.to(()=> ChossScreen());
-  });
-}
+      // addressController.clear();
+      // Get.to(()=> ChossScreen());
+    });
+  }
 
   Set<Marker> markers = {};
 
@@ -326,7 +324,7 @@ class _postRState extends State<postR> {
       child: Scaffold(
         key: _scaffoldKey,
         body: Form(
-           key: _formkey,
+          key: _formkey,
           child: Stack(
             children: <Widget>[
               // Map View
@@ -423,7 +421,8 @@ class _postRState extends State<postR> {
                                 suffixIcon: IconButton(
                                   icon: const Icon(Icons.my_location),
                                   onPressed: () {
-                                    startAddressController.text = _currentAddress;
+                                    startAddressController.text =
+                                        _currentAddress;
                                     _startAddress = _currentAddress;
                                   },
                                 ),
@@ -555,36 +554,35 @@ class _postRState extends State<postR> {
                   ),
                 ),
               ),
-              SafeArea(child: Align(
+              SafeArea(
+                  child: Align(
                 alignment: Alignment.bottomCenter,
-
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: MaterialButton(
                     height: 40,
                     minWidth: 150,
-                      color: Colors.green,
-                      textColor: Colors.white,
-                      elevation: 10,
-                      child: const Text(
-                        ' Next ', style: TextStyle(
-                          fontSize: 20,
-                        ),
+                    color: Colors.green,
+                    textColor: Colors.white,
+                    elevation: 10,
+                    child: const Text(
+                      ' Next ',
+                      style: TextStyle(
+                        fontSize: 20,
                       ),
-                      onPressed: () {
-                        if (_formkey.currentState!.validate()) {
-                                                 storeUserInfo();
-                      Get.to(const PostdataR());
-                    }
-
-                      },
                     ),
+                    onPressed: () {
+                      if (_formkey.currentState!.validate()) {
+                        storeUserInfo();
+                        Get.to(const PostdataR());
+                      }
+                    },
+                  ),
                 ),
               ))
             ],
           ),
         ),
-
       ),
     );
   }

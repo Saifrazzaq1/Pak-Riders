@@ -1,14 +1,9 @@
-// ignore_for_file: file_names
-
-import 'package:pakriders/constants.dart';
-
-// ignore_for_file: file_names
-
-import 'package:flutter/cupertino.dart';
-import 'package:pakriders/constants.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SaverideR extends StatefulWidget {
-  const SaverideR({super.key});
+  const SaverideR({Key? key}) : super(key: key);
 
   @override
   State<SaverideR> createState() => SaverideRState();
@@ -21,9 +16,9 @@ class SaverideRState extends State<SaverideR> {
   String start = 'Loading..';
   String number = 'Loading';
   String profilepic = 'Loading...';
+  String date = 'Loading...';
   User? user;
-  // String image1='Loading...';
-  // String image2='Loading...';
+
   void getData() async {
     user = FirebaseAuth.instance.currentUser;
     var vari = await FirebaseFirestore.instance
@@ -39,18 +34,30 @@ class SaverideRState extends State<SaverideR> {
           start = vari.data()!['start'];
           number = vari.data()!['number'];
           profilepic = vari.data()!['profilepic'];
+          date = vari.data()!['date'];
         } else {
           name = '';
           destination = '';
           start = '';
           number = '';
           profilepic = '';
+          date = '';
         }
       });
     }
   }
 
   Future<void> deleteData() async {
+    // Store data in 'deleteR' collection against user's ID
+    await FirebaseFirestore.instance.collection('deleteR').doc(user?.uid).set({
+      'name': name,
+      'destination': destination,
+      'start': start,
+      'number': number,
+      'date': date,
+    });
+
+    // Delete data from 'AllinOne' collection
     await FirebaseFirestore.instance
         .collection('AllinOne')
         .doc(user?.uid)
@@ -60,20 +67,69 @@ class SaverideRState extends State<SaverideR> {
     getData();
   }
 
+  Future<void> showEarningsPopup() async {
+    String totalEarnings = ''; // Initialize with an empty string
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter Total Earnings'),
+          content: TextField(
+            onChanged: (value) {
+              totalEarnings = value;
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Validate totalEarnings if needed
+
+                // Save data to the 'completed' collection
+                await FirebaseFirestore.instance
+                    .collection('completedR')
+                    .doc(user?.uid)
+                    .set({
+                  'name': name,
+                  'destination': destination,
+                  'start': start,
+                  'number': number,
+                  'date': date,
+                  'totalEarnings': totalEarnings,
+                });
+
+                // Refresh the screen
+                getData();
+
+                // Close the dialog
+                Navigator.of(context).pop();
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> CompleteData() async {
+    await showEarningsPopup();
+  }
+
   @override
   void initState() {
-    //  getRData();
     getData();
-
     super.initState();
   }
 
-  get textController => null;
-  List<int> selecteditem = [];
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -95,18 +151,16 @@ class SaverideRState extends State<SaverideR> {
               children: [
                 Expanded(
                   child: GridView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: 1,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: screenWidth > 600 ? 2 : 1,
+                      crossAxisCount: 1,
                       crossAxisSpacing: 5.0,
+                      mainAxisSpacing: 5.0, // Adjust this spacing if needed
                     ),
                     itemBuilder: (BuildContext context, int index) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          width: screenWidth > 600 ? 400 : screenWidth * 0.8,
-                          height: screenHeight * 0.3,
                           margin: const EdgeInsets.all(10.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -128,7 +182,7 @@ class SaverideRState extends State<SaverideR> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     CircleAvatar(
-                                      radius: screenWidth > 600 ? 90 : 60,
+                                      radius: 60,
                                       backgroundImage: NetworkImage(profilepic),
                                     ),
                                     const SizedBox(
@@ -139,12 +193,14 @@ class SaverideRState extends State<SaverideR> {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.05,
+                                            20, // Adjust this font size as needed
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
+                                ),
+                                SizedBox(
+                                  width: 40,
                                 ),
                                 Expanded(
                                   child: Column(
@@ -155,10 +211,8 @@ class SaverideRState extends State<SaverideR> {
                                       Text(
                                         'From: ',
                                         style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.05,
+                                          fontSize:
+                                              20, // Adjust this font size as needed
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -170,25 +224,19 @@ class SaverideRState extends State<SaverideR> {
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 3,
                                           style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.04,
+                                            fontSize:
+                                                16, // Adjust this font size as needed
                                           ),
                                         ),
                                       ),
                                       SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.01,
+                                        height: 10,
                                       ),
                                       Text(
                                         'to: ',
                                         style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.05,
+                                          fontSize:
+                                              20, // Adjust this font size as needed
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -200,25 +248,19 @@ class SaverideRState extends State<SaverideR> {
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 3,
                                           style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.04,
+                                            fontSize:
+                                                16, // Adjust this font size as needed
                                           ),
                                         ),
                                       ),
                                       SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.01,
+                                        height: 10,
                                       ),
                                       Text(
                                         'Contact:',
                                         style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.05,
+                                          fontSize:
+                                              20, // Adjust this font size as needed
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -228,10 +270,8 @@ class SaverideRState extends State<SaverideR> {
                                           number,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.04,
+                                            fontSize:
+                                                16, // Adjust this font size as needed
                                           ),
                                         ),
                                       ),
@@ -239,13 +279,39 @@ class SaverideRState extends State<SaverideR> {
                                         height: 20,
                                         width: 100,
                                       ),
-                                      IconButton(
-                                        onPressed: deleteData,
-                                        icon: const Icon(
-                                          Icons.delete,
-                                          size: 40,
-                                          color: Colors.green,
-                                        ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: deleteData,
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              size: 40,
+                                              color: Colors.green,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          IconButton(
+                                            onPressed: deleteData,
+                                            icon: const Icon(
+                                              Icons.edit,
+                                              size: 40,
+                                              color: Colors.green,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          IconButton(
+                                            onPressed: CompleteData,
+                                            icon: const Icon(
+                                              Icons.check_box,
+                                              size: 40,
+                                              color: Colors.green,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),

@@ -23,7 +23,7 @@ class _FindRidesUState extends State<FindRidesU> {
 
   Future<void> _fetchData() async {
     final QuerySnapshot snapshot =
-    await FirebaseFirestore.instance.collection('AllinOne').get();
+        await FirebaseFirestore.instance.collection('AllinOne').get();
 
     setState(() {
       _documents = snapshot.docs;
@@ -34,7 +34,7 @@ class _FindRidesUState extends State<FindRidesU> {
   void _performSearch(String query) {
     final List<QueryDocumentSnapshot> filteredList = _documents
         .where((doc) =>
-        doc['start'].toString().toLowerCase().contains(query.toLowerCase()))
+            doc['start'].toString().toLowerCase().contains(query.toLowerCase()))
         .toList();
 
     setState(() {
@@ -84,7 +84,8 @@ class _FindRidesUState extends State<FindRidesU> {
             Expanded(
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: MediaQuery.of(context).size.width < 600 ? 1 : 2,
+                  crossAxisCount:
+                      MediaQuery.of(context).size.width < 600 ? 1 : 2,
                   crossAxisSpacing: 5.0,
                   mainAxisSpacing: 3.0,
                 ),
@@ -123,7 +124,8 @@ class _FindRidesUState extends State<FindRidesU> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   CircleAvatar(
-                                    radius: MediaQuery.of(context).size.width * 0.2,
+                                    radius:
+                                        MediaQuery.of(context).size.width * 0.2,
                                     backgroundImage: NetworkImage(imageUrl),
                                   ),
                                   const SizedBox(
@@ -132,7 +134,9 @@ class _FindRidesUState extends State<FindRidesU> {
                                   Text(
                                     document['name'],
                                     style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width * 0.06,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.06,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -145,7 +149,8 @@ class _FindRidesUState extends State<FindRidesU> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       const Text(
@@ -161,7 +166,10 @@ class _FindRidesUState extends State<FindRidesU> {
                                           document['start'],
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            fontSize: MediaQuery.of(context).size.width * 0.04, // Adjust the font size based on screen width
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.04, // Adjust the font size based on screen width
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 2,
@@ -179,16 +187,16 @@ class _FindRidesUState extends State<FindRidesU> {
                                       ),
                                       FittedBox(
                                         fit: BoxFit.scaleDown,
-
                                         child: Text(
                                           document['destination'],
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 2,
-
                                           style: TextStyle(
-                                            fontSize: MediaQuery.of(context).size.width * 0.04,
-
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.04,
                                           ),
                                         ),
                                       ),
@@ -210,13 +218,15 @@ class _FindRidesUState extends State<FindRidesU> {
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 2,
                                           style: TextStyle(
-                                            fontSize: MediaQuery.of(context).size.width * 0.04,
-
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.04,
                                           ),
                                         ),
                                       ),
                                       const SizedBox(
-                                        height:4,
+                                        height: 4,
                                       ),
                                       MaterialButton(
                                         textColor: Colors.white,
@@ -226,7 +236,8 @@ class _FindRidesUState extends State<FindRidesU> {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => UserDetailsScreen(
+                                              builder: (context) =>
+                                                  UserDetailsScreen(
                                                 userId: document.id,
                                               ),
                                             ),

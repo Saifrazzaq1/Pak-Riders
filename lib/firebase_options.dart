@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCJIqlypMTy4DUi0Hra2hjExV3MXj2K104',
-    appId: '1:785782331822:android:5757dace7b0b73c8a4d03f',
-    messagingSenderId: '785782331822',
-    projectId: 'pak-riders-10068',
-    storageBucket: 'pak-riders-10068.appspot.com',
+    apiKey: 'AIzaSyDLzoweVkk2OCAR0ZNDzxjKKQd27DqUATQ',
+    appId: '1:915489116581:android:abfbf3ee5215ee9217984c',
+    messagingSenderId: '915489116581',
+    projectId: 'pak-riders-41ebc',
+    storageBucket: 'pak-riders-41ebc.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD5zzcIyFiWCSz065Da4To7Ni_lydXb9pA',
-    appId: '1:785782331822:ios:62c17d9292c84c4da4d03f',
-    messagingSenderId: '785782331822',
-    projectId: 'pak-riders-10068',
-    storageBucket: 'pak-riders-10068.appspot.com',
-    iosClientId: '785782331822-rpof96g3ktlm7ntlaphuhvi0tplf86ut.apps.googleusercontent.com',
+    apiKey: 'AIzaSyCDd_EF5RUCQRNwn7pbnp8vnG7DW6s8lJs',
+    appId: '1:915489116581:ios:5b526513e253d0ba17984c',
+    messagingSenderId: '915489116581',
+    projectId: 'pak-riders-41ebc',
+    storageBucket: 'pak-riders-41ebc.appspot.com',
+    iosClientId: '915489116581-i75t13dcttgbtft3ooi6mlfq43i88lha.apps.googleusercontent.com',
     iosBundleId: 'com.example.pakriders',
   );
 }

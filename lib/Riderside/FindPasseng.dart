@@ -24,9 +24,8 @@ class _FindassengState extends State<Findasseng> {
   }
 
   Future<void> _fetchData() async {
-    final QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('AllinOneU')
-        .get();
+    final QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection('AllinOneU').get();
 
     setState(() {
       _documents = snapshot.docs;
@@ -37,7 +36,7 @@ class _FindassengState extends State<Findasseng> {
   void _performSearch(String query) {
     final List<QueryDocumentSnapshot> filteredList = _documents
         .where((doc) =>
-        doc['start'].toString().toLowerCase().contains(query.toLowerCase()))
+            doc['start'].toString().toLowerCase().contains(query.toLowerCase()))
         .toList();
 
     setState(() {
@@ -52,15 +51,20 @@ class _FindassengState extends State<Findasseng> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.05,
+                vertical: MediaQuery.of(context).size.height * 0.02,
+              ),
               child: TextField(
                 controller: _searchController,
                 onChanged: _performSearch,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey[200],
-                  contentPadding:
-                  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.of(context).size.height * 0.015,
+                    horizontal: MediaQuery.of(context).size.width * 0.04,
+                  ),
                   hintText: 'Search...',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
@@ -80,167 +84,177 @@ class _FindassengState extends State<Findasseng> {
               ),
             ),
             Expanded(
-              child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  return GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: _getCrossAxisCount(constraints.maxWidth),
-                      crossAxisSpacing: 5.0,
-                      mainAxisSpacing: 3.0,
-                    ),
-                    itemCount: _filteredDocuments.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      var document = _filteredDocuments[index];
-                      String imageUrl = document['profilepic'];
-                      return GridTile(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height,
-                            margin: const EdgeInsets.all(10.0),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black54,
-                                  blurRadius: 4,
-                                  offset: Offset(6, 6),
-                                ),
-                              ],
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount:
+                      MediaQuery.of(context).size.width < 600 ? 1 : 2,
+                  crossAxisSpacing: 5.0,
+                  mainAxisSpacing: 3.0,
+                ),
+                itemCount: _filteredDocuments.length,
+                itemBuilder: (BuildContext context, int index) {
+                  var document = _filteredDocuments[index];
+                  String imageUrl = document['profilepic'];
+                  return GridTile(
+                    child: Padding(
+                      padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * 0.03,
+                      ),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        height: MediaQuery.of(context).size.height * 0.3,
+                        margin: EdgeInsets.all(
+                          MediaQuery.of(context).size.width * 0.05,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black54,
+                              blurRadius: 4,
+                              offset: Offset(6, 6),
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 8.0,right: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0, right: 8),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CircleAvatar(
-                                        radius: _getCircleAvatarRadius(constraints),
-                                        backgroundImage: NetworkImage(imageUrl),
-                                      ),
-                                      SizedBox(
-                                        height:20,
-                                      ),
-                                      Text(
-                                        document['name'],
-                                        style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width * 0.05,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
+                                  CircleAvatar(
+                                    radius:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    backgroundImage: NetworkImage(imageUrl),
                                   ),
-
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(
-                                            height: 40,
-                                          ),
-                                          Text(
-                                            'From: ',
-                                            style: TextStyle(
-                                              fontSize: MediaQuery.of(context).size.width * 0.05,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-
-                                          ),
-                                          FittedBox(
-                                            fit: BoxFit.scaleDown,
-                                            child: Text(
-                                              document['start'],
-
-                                              textAlign: TextAlign.center,
-
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 2,
-                                              style: TextStyle(
-                                                fontSize: MediaQuery.of(context).size.width * 0.04,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: MediaQuery.of(context).size.height * 0.01,
-                                          ),
-                                          Text(
-                                            'to: ',
-                                            style: TextStyle(
-                                                fontSize: MediaQuery.of(context).size.width * 0.05,
-                                              fontWeight: FontWeight.bold
-                                            ),
-                                          ),
-                                          FittedBox(
-                                            fit: BoxFit.scaleDown,
-                                            child: Text(
-                                              document['destination'],
-                                              textAlign: TextAlign.center,
-
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 2,
-                                              style: TextStyle(
-                                                fontSize: MediaQuery.of(context).size.width * 0.04,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: MediaQuery.of(context).size.height * 0.01,
-                                          ),
-                                           Text(
-                                            'Contact:',
-                                            style: TextStyle(
-                                                fontSize: MediaQuery.of(context).size.width * 0.05,
-                                              fontWeight: FontWeight.bold
-                                            ),
-                                          ),
-                                          FittedBox(
-                                            fit: BoxFit.scaleDown,
-                                            child: Text(
-                                              document['number'],
-                                              textAlign: TextAlign.center,
-                                              maxLines: 2,
-                                              style:  TextStyle(
-                                                fontSize: MediaQuery.of(context).size.width * 0.04,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-
-                                          MaterialButton(
-                                            textColor: Colors.white,
-                                            color: Color(0xff58BE3F),
-                                            child: Text('Details'),
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => DetailsScreen(
-                                                    userId: document.id,
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Text(
+                                    document['name'],
+                                    style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.06,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        'From: ',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          document['start'],
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.04, // Adjust the font size based on screen width
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 7,
+                                      ),
+                                      const Text(
+                                        'To: ',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          document['destination'],
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.04,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 7,
+                                      ),
+                                      const Text(
+                                        'Contact:',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          document['number'],
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.04,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 4,
+                                      ),
+                                      MaterialButton(
+                                        textColor: Colors.white,
+                                        color: Color(0xff58BE3F),
+                                        child: Text('Details'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DetailsScreen(
+                                                userId: document.id,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   );
                 },
               ),
@@ -249,21 +263,5 @@ class _FindassengState extends State<Findasseng> {
         ),
       ),
     );
-  }
-
-  int _getCrossAxisCount(double width) {
-    if (width >= 600) {
-      return 2; // For tablets and larger screens
-    } else {
-      return 1; // For mobile devices
-    }
-  }
-
-  double _getCircleAvatarRadius(BoxConstraints constraints) {
-    return constraints.maxWidth >= 600 ? 90 : 70;
-  }
-
-  double _getSizedBoxHeight(BoxConstraints constraints) {
-    return constraints.maxWidth >= 600 ? 10 : 5;
   }
 }

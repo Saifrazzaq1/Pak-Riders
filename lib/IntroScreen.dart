@@ -68,33 +68,33 @@ class IntroScreen extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     const Center(
-                //       child: Text(
-                //         'Login with social media?',
-                //         // textAlign: TextAlign.start,
-                //         style: TextStyle(fontSize: 15, color: Colors.black87),
-                //       ),
-                //     ),
-                //     Center(
-                //       child: GestureDetector(
-                //         child: const Text(
-                //           'Click Here',
-                //           //textAlign: TextAlign.center,
-                //           style: TextStyle(
-                //             fontSize: 18,
-                //             color: Color(0xff58BE3F),
-                //           ),
-                //         ),
-                //         onTap: () {
-                //           Get.to(()=>Sociallogin());
-                //         },
-                //       ),
-                //     ),
-                //   ],
-                // ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Center(
+                      child: Text(
+                        'Login with social media?',
+                        // textAlign: TextAlign.start,
+                        style: TextStyle(fontSize: 15, color: Colors.black87),
+                      ),
+                    ),
+                    Center(
+                      child: GestureDetector(
+                        child: const Text(
+                          'Click Here',
+                          //textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Color(0xff58BE3F),
+                          ),
+                        ),
+                        onTap: () {
+                          Get.to(() => Sociallogin());
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

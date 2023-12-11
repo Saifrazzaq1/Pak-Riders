@@ -1,3 +1,5 @@
+// ignore_for_file: duplicate_export
+
 export 'package:pakriders/ChossScreen.dart';
 export 'package:pakriders/ForgetPas.dart';
 export 'package:pakriders/Forgetotp.dart';
@@ -20,12 +22,11 @@ export 'package:pakriders/Userside/SaverideU.dart';
 export 'package:pakriders/Riderside/detailsR.dart';
 export 'package:pakriders/Riderside/FindPasseng.dart';
 
-
 export 'package:pakriders/Userside/Cancle.dart';
 export 'package:pakriders/Userside/Chat.dart';
 export 'package:pakriders/Userside/BottomBar.dart';
 export 'package:pakriders/Userside/Completed.dart';
-export 'package:pakriders/Userside/Confirm.dart';
+export 'package:pakriders/Userside/Delete.dart';
 export 'package:pakriders/Userside/Pending.dart';
 export 'package:pakriders/Userside/Reject.dart';
 export 'package:pakriders/Userside/FindRidesU.dart';
@@ -35,7 +36,7 @@ export 'package:pakriders/Riderside/CancleR.dart';
 export 'package:pakriders/Userside/Map.dart';
 export 'package:pakriders/Riderside/CompletedR.dart';
 export 'package:pakriders/Riderside/notescreen.dart';
-export 'package:pakriders/Riderside/ConfirmR.dart';
+export 'package:pakriders/Riderside/DeleteR.dart';
 export 'package:pakriders/Riderside/PendingR.dart';
 export 'package:pakriders/Riderside/RejectR.dart';
 export 'package:pakriders/Riderside/SaverideR.dart';
@@ -67,7 +68,6 @@ export 'package:pakriders/Riderside/VehicleDetails.dart';
 export 'package:pakriders/verifyScreen.dart';
 export 'package:flutter_polyline_points/flutter_polyline_points.dart';
 export 'package:geocoding/geocoding.dart';
-// ignore: duplicate_export
 export 'package:geolocator/geolocator.dart';
 export 'package:google_maps_flutter/google_maps_flutter.dart';
 export 'package:pakriders/Riderside/secrets.dart';

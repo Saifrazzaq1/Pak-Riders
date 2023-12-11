@@ -67,13 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   int selectedpage = 0;
-  final _pageNo = [
-    const Confirm(),
-    const Pending(),
-    const Rejected(),
-    const Cancel(),
-    const Complete()
-  ];
+  final _pageNo = [Delete(), Pending(), Complete()];
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -236,11 +230,11 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: const Color(0xff58BE3F),
           style: TabStyle.react,
           items: const [
-            TabItem(icon: Icons.check, title: 'Confirm'),
+            TabItem(icon: Icons.delete_outline, title: 'Deleted'),
             TabItem(icon: Icons.replay, title: 'Pending'),
-            TabItem(icon: Icons.thumb_down_alt, title: 'Reject'),
-            TabItem(icon: Icons.close, title: 'Cancel'),
             TabItem(icon: Icons.task_alt, title: 'Complete'),
+            // TabItem(icon: Icons.thumb_down_alt, title: 'Reject'),
+            // TabItem(icon: Icons.close, title: 'Cancel'),
           ],
           initialActiveIndex: selectedpage,
           onTap: (int index) {

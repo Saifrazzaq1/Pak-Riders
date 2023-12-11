@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:pakriders/Riderside/SettingsRider.dart';
+import 'package:pakriders/Riderside/VehicleMaint.dart';
 import 'package:pakriders/Riderside/priviacy_policy.dart';
 import 'package:pakriders/UserProfil.dart';
 import 'package:pakriders/constants.dart';
@@ -50,13 +51,7 @@ class _BottomRidState extends State<BottomRid> {
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   int selectedpage = 0;
-  final _pageNo = [
-    const ConfirmR(),
-    const PendingR(),
-    const RejectedR(),
-    const CancleR(),
-    const CompleteR()
-  ];
+  final _pageNo = [DeleteR(), PendingR(), CompleteR()];
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -103,6 +98,16 @@ class _BottomRidState extends State<BottomRid> {
                 title: const Text(' Settings'),
                 onTap: () {
                   Get.to(settingsR());
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.car_repair_outlined),
+                title: const Text(' Vehicle Maintenance '),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => VehicleMaint()),
+                  );
                 },
               ),
               ListTile(
@@ -218,10 +223,8 @@ class _BottomRidState extends State<BottomRid> {
           backgroundColor: const Color(0xff58BE3F),
           style: TabStyle.react,
           items: const [
-            TabItem(icon: Icons.check, title: 'Confirm'),
+            TabItem(icon: Icons.delete_outline, title: 'Deleted'),
             TabItem(icon: Icons.replay, title: 'Pending'),
-            TabItem(icon: Icons.thumb_down_alt, title: 'Reject'),
-            TabItem(icon: Icons.close, title: 'Cancel'),
             TabItem(icon: Icons.task_alt, title: 'Complete'),
           ],
           initialActiveIndex: selectedpage,

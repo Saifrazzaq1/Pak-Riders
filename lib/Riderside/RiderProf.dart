@@ -1,6 +1,10 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, non_constant_identifier_names
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart'; // Make sure to import Get package
 import 'package:pakriders/Userside/settingsuser.dart';
 import 'package:pakriders/constants.dart';
 
@@ -20,9 +24,14 @@ class _RiderProfileState extends State<RiderProfile> {
   String address = 'Loading..';
   String type = 'Loading';
   String image1 = 'Loading...';
-  //  File? imageXFile;
+  double newEarnings = 0.0;
+  // Create a variable to store total earnings
+  double totalEarnings = 0.0;
+  double Earns = 0.0;
   void getData() async {
-    User? user = await FirebaseAuth.instance.currentUser;
+    User? user = FirebaseAuth.instance.currentUser;
+
+    // Fetch user data
     var vari = await FirebaseFirestore.instance
         .collection('users')
         .doc(user?.uid)
@@ -35,21 +44,37 @@ class _RiderProfileState extends State<RiderProfile> {
         .collection('vehicle')
         .doc(user?.uid)
         .get();
+    var vari3 = await FirebaseFirestore.instance
+        .collection('completedR')
+        .doc(user?.uid)
+        .get();
 
-    setState(() {
-      name = vari.data()!['name'];
-      email = vari.data()!['email'];
-      address = vari.data()!['address'];
-      type = vari2.data()!['type'];
-      image1 = vari1.data()!['profilepic'];
-    });
+    // Check if the retrieved data is not null
+    if (vari.exists && vari1.exists && vari2.exists && vari3.exists) {
+      setState(() {
+        name = vari.data()!['name'];
+        email = vari.data()!['email'];
+        address = vari.data()!['address'];
+        type = vari2.data()!['type'];
+        image1 = vari1.data()!['profilepic'];
+
+        // Update total earnings
+        newEarnings = double.parse(vari3.data()!['totalEarnings'] ?? '0');
+
+// Update totalEarnings by adding the new value
+        totalEarnings += newEarnings;
+
+// Assign the updated totalEarnings to Earns if needed
+        Earns = totalEarnings;
+      });
+    }
   }
 
   @override
   void initState() {
-    //  getRData();
+    totalEarnings = 0.0;
+    Earns = 0.0;
     getData();
-
     super.initState();
   }
 
@@ -152,82 +177,33 @@ class _RiderProfileState extends State<RiderProfile> {
             const SizedBox(
               height: 20,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      "Total Rides:",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: MediaQuery.of(context).size.width * 0.035,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                        decoration: TextDecoration.underline,
-                      ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Total Earn:",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: MediaQuery.of(context).size.width * 0.035,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      decoration: TextDecoration.underline,
                     ),
-                    SizedBox(height: 8),
-                    Text(
-                      "1534",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context).size.width * 0.05,
-                        fontFamily: "Arial",
-                      ),
-                    )
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "Total Earn:",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: MediaQuery.of(context).size.width * 0.035,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                        decoration: TextDecoration.underline,
-                      ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    Earns.toStringAsFixed(2), // Keep it as String
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: MediaQuery.of(context).size.width * 0.05,
+                      fontFamily: "Arial",
                     ),
-                    SizedBox(height: 8),
-                    Text(
-                      "1534",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context).size.width * 0.05,
-                        fontFamily: "Arial",
-                      ),
-                    )
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "Years:",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: MediaQuery.of(context).size.width * 0.035,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      "2,5",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context).size.width * 0.05,
-                        fontFamily: "Arial",
-                      ),
-                    )
-                  ],
-                )
-              ],
+                  ),
+                ],
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -319,7 +295,7 @@ class _RiderProfileState extends State<RiderProfile> {
                   child: Center(
                     child: GestureDetector(
                       onTap: () {
-                        Get.to(Riderdetails());
+                        Get.to(() => Riderdetails());
                       },
                       child: Text(
                         "More Details",

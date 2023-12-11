@@ -11,14 +11,47 @@ class Pending extends StatefulWidget {
 }
 
 class _PendingState extends State<Pending> {
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  String destination = 'Loading...';
+  String start = 'Loading..';
+  String date = 'Loading';
+  User? user;
+  void getData() async {
+    user = FirebaseAuth.instance.currentUser;
+    var vari = await FirebaseFirestore.instance
+        .collection('AllinOneU')
+        .doc(user?.uid)
+        .get();
+
+    if (mounted) {
+      setState(() {
+        if (vari.exists) {
+          destination = vari.data()!['destination'];
+          start = vari.data()!['start'];
+          date = vari.data()!['date'];
+        } else {
+          date = '';
+          destination = '';
+          start = '';
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    //  getRData();
+    getData();
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
+      body: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Padding(
@@ -26,7 +59,7 @@ class _PendingState extends State<Pending> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
@@ -61,7 +94,7 @@ class _PendingState extends State<Pending> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0)),
                     child: const Text(
-                      'Save Driver',
+                      'Save Rides',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -88,30 +121,125 @@ class _PendingState extends State<Pending> {
               textColor: Colors.white,
               color: const Color(0xff58BE3F),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
               child: const Text(
                 'Find Rider',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               onPressed: () {
                 Get.to(FindRidesU());
-                // Navigator.pushNamed(context, "otp");
-
-                // Navigator.pushNamed(context, "login");
               },
             ),
           ),
-          const SizedBox(
-            height: 150,
+          SizedBox(
+            height: 20,
           ),
-          const Text(
-            'You dont have any pending booking yet!',
-            style: TextStyle(
-              color: Colors.black38,
-            ),
-          )
+          date.isEmpty && destination.isEmpty && start.isEmpty
+              ? Column(
+                  children: [
+                    SizedBox(
+                      height: 150,
+                    ),
+                    Text('No data Exist Here'),
+                  ],
+                )
+              : Expanded(
+                  child: ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        subtitle: Container(
+                          width: 300,
+                          height: 100,
+                          margin: const EdgeInsets.all(5.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black54,
+                                blurRadius: 4,
+                                offset: Offset(6, 6),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Date: ',
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      date,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Start: ',
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      start,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'destination: ',
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      destination,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
         ],
       ),
-    ));
+    );
   }
 }

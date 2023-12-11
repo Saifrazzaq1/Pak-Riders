@@ -2,13 +2,66 @@
 
 import 'dart:io';
 
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:pakriders/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DetailsScreen extends StatelessWidget {
+class DetailsScreen extends StatefulWidget {
   final String userId;
 
   const DetailsScreen({Key? key, required this.userId}) : super(key: key);
+
+  @override
+  State<DetailsScreen> createState() => _DetailsScreenState();
+}
+
+class _DetailsScreenState extends State<DetailsScreen> {
+  double userRating = 0.0;
+  String currentUserName = ''; // Declare the variable here
+  Future<void> submitRating() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      print('User is not logged in.');
+      return;
+    }
+
+    final ratingData = {
+      'userName': currentUserName,
+      'rating': userRating,
+      'timestamp': FieldValue.serverTimestamp(),
+    };
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('UserRatings')
+          .doc(user.uid) // Use the user's UID as the document ID
+          .collection('Ratings') // Create a subcollection for ratings
+          .add(
+              ratingData); // Use "add" to generate a new document with a unique ID
+      Fluttertoast.showToast(
+        msg: 'Submitted Successfully',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+    } catch (e) {
+      print('Error submitting rating: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Retrieve the current user's name when the screen initializes
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      currentUserName = user.displayName ?? '';
+    }
+  }
+
   reachUs(String contact) async {
     var android_url = "whatsapp://send?phone=" +
         contact +
@@ -45,7 +98,7 @@ class DetailsScreen extends StatelessWidget {
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance
             .collection('AllinOneU')
-            .doc(userId)
+            .doc(widget.userId)
             .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -524,7 +577,90 @@ class DetailsScreen extends StatelessWidget {
                 ),
                 SizedBox(
                   height: 30,
-                )
+                ),
+                Divider(height: 3, thickness: 1, color: Colors.blueGrey[200]),
+                const Center(
+                  child: Text(
+                    'Rate This User',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Container(
+                  height: 180,
+                  width: 300,
+                  decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 226, 225, 225),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Center(
+                    child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          children: [
+                            // Add a UI for rating
+                            RatingBar.builder(
+                              initialRating:
+                                  userRating, // Initialize with the current user's rating
+                              minRating: 1,
+                              direction: Axis.horizontal,
+                              allowHalfRating: false,
+                              itemCount: 5,
+                              itemSize: 40.0,
+                              itemBuilder: (context, _) => const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                              ),
+                              onRatingUpdate: (rating) {
+                                setState(() {
+                                  userRating = rating;
+                                });
+                              },
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              'Current Rating: ${userRating.toStringAsFixed(1)}',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+
+                            ElevatedButton(
+                              onPressed: () {
+                                submitRating();
+                                // You can also show a confirmation message to the user here
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Color(
+                                    0xff58BE3F), // Change this color to your desired button color
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), // Customize the button's shape
+                                ),
+                              ),
+                              child: Text(
+                                "Submit Rating",
+                                style: TextStyle(
+                                  color: Colors
+                                      .white, // Change this color to the text color you want
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )),
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
+                ),
               ],
             ),
           );
